@@ -1,0 +1,42 @@
+#include <iostream>
+#include <filesystem>
+#include <string>
+
+namespace fs = std::filesystem;
+
+void listFiles(const std::string& path) {
+    for (const auto& entry : fs::directory_iterator(path)) {
+        std::cout << entry.path().filename().string();
+
+        if (fs::is_regular_file(entry)) {
+            std::cout << " (" << entry.path().extension().string() << ")";
+        }
+
+        std::cout << std::endl;
+    }
+}
+
+int main() {
+    std::string folderPath;
+    std::cout << "Ingrese la dirección de la carpeta: ";
+    std::cin >> folderPath;
+
+    try {
+        if (fs::exists(folderPath) && fs::is_directory(folderPath)) {
+            std::cout << "Archivos y carpetas en la carpeta '" << folderPath << "':" << std::endl;
+            listFiles(folderPath);
+        }
+        else {
+            std::cerr << "La carpeta especificada no existe o no es válida." << std::endl;
+        }
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+
+    std::cout << "Presione Enter para salir...";
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    std::cin.get(); // Esperar a que el usuario presione Enter
+
+    return 0;
+}
